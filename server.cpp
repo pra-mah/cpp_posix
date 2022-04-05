@@ -8,16 +8,30 @@
 #include<sys/types.h>
 #include <fstream>
 #include <filesystem>
-namespace fs = std::filesystem;
 
-/*class Message{
+class Message{
 public:
-	void input();
+	std::string input();
 	void output();
+	
+	
 private:
-	long token_number;
+	std::string src;
+	
+};
 
-}*/
+std::string Message::input()
+{
+	src = "hello";
+	const char * message = src.c_str();
+	std::cout<<message;
+}
+
+void Message::output() 
+{
+	std::cout << "\nMessage sent to client\n";
+}
+
 
 const std::string str1  = "/sp-server";
 const char * SERVER_QUEUE_NAME   = str1.c_str();
@@ -28,8 +42,13 @@ const int MSG_BUFFER_SIZE = MAX_MSG_SIZE + 10;
 
 int main(int argc, char **argv)
 {
-    mqd_t qd_server, qd_client;   // queue descriptors
-    long token_number = 1; // next token to be given to client
+
+    // Creating object of the class
+    Message obj;
+  
+   
+   mqd_t qd_server, qd_client;   // queue descriptors
+    //long token_number = 1; 
 
     std::cout<< "Server: Hello, World!\n";
     // Set queue attributes
@@ -43,36 +62,24 @@ int main(int argc, char **argv)
     //Replace these with file 
     char in_buffer [MSG_BUFFER_SIZE];
     char out_buffer [MSG_BUFFER_SIZE];
-    /*const std::filesystem::path src = "hello";
-    cout<<"File read"<<endl;*/
+ 
 
         if ((qd_server = mq_open (SERVER_QUEUE_NAME, O_RDONLY | O_CREAT, QUEUE_PERMISSIONS, &attr)) == -1) {
         perror ("Server: mq_open (server)");
         exit (1);
     }
     while (1) {
-        // get the oldest message with highest priority
-        if (mq_receive (qd_server, in_buffer, MSG_BUFFER_SIZE, NULL) == -1) {
-            perror ("Server: mq_receive");
-            exit (1);
-        }
-        std::cout<<"Server: Message received. \n"<<std::endl;
-    
-    //Send reply message to client
-    if ((qd_client = mq_open (in_buffer, O_WRONLY)) == 1) {
-            perror ("Server: Not able to open client queue");
-            continue;
-        }
         
-        std::cout<< out_buffer<<token_number<<std::endl;
+        
+        std::cout<< out_buffer<<obj.input()<<std::endl;//call object ("hello")
 
         if (mq_send (qd_client, out_buffer, strlen (out_buffer) + 1, 0) == -1) {
             perror ("Server: Not able to send message to client");
             continue;
         }
 
-        std::cout<<"Server: response sent to client.\n";
-        token_number++;
+        //std::cout<<"Server: response sent to client.\n";
+        obj.output();//call object (input/output)
     }//end while
     
     
