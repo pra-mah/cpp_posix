@@ -1,0 +1,6 @@
+07/04/2022:
+
+- Function1: Opens and creates a pipe (using mkfifo())
+  Read the data from pipe to vector of char. 
+  
+- Function2: Takes as input the vector of chars from the pervious function. Writes the data to pipe, then close it. 
